@@ -10,7 +10,7 @@ export const ProfileProvider = ({ children }) => {
 
   useEffect(() => {
     let userRef;
-    //allow to subscrie to currently signed in user inside the fairebase
+    //allow to subscribe to currently signed in user inside the fairebase
     const authUnsub = auth.onAuthStateChanged((authObj) => {
       // console.log('authObj',authObj) //user object will be here if signed in
       if (authObj) {
