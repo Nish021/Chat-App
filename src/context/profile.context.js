@@ -18,12 +18,13 @@ export const ProfileProvider = ({ children }) => {
         // get data from the database and put real time subscription on this data
         userRef = database.ref(`/profiles/${authObj.uid}`);
         userRef.on("value", (snap) => {
-          const { name, createdAt } = snap.val();
+          const { name, createdAt, avatar } = snap.val();
 
           const data = {
             //  we need get data from the real time database
             name,
             createdAt,
+            avatar,
             uid: authObj.uid,
             email: authObj.email,
           };
