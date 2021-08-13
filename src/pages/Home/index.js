@@ -5,6 +5,7 @@ import Sidebar from "../../components/Sidebar";
 import { RoomsProvider } from "../../context/rooms.context";
 import { useMediaQuery } from "../../misc/custom-hooks";
 import Chat from "./Chat";
+
 const Home = () => {
   //small screen
   const isDesktop = useMediaQuery("(min-width: 992px)");
