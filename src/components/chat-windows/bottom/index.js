@@ -24,6 +24,7 @@ const ChatBottom = () => {
 
   const { chatId } = useParams();
   const { profile } = useProfile();
+
   const onInputChange = useCallback((value) => {
     setInput(value);
   }, []);

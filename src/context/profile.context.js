@@ -23,7 +23,7 @@ export const ProfileProvider = ({ children }) => {
   useEffect(() => {
     let userRef;
     let userStatusRef;
-    //allow to subscribe to currently signed in user inside the fairebase
+    //allow to subscribe to currently signed in user inside the firebase
     const authUnsub = auth.onAuthStateChanged((authObj) => {
       // console.log('authObj',authObj) //user object will be here if signed in
       if (authObj) {
@@ -47,26 +47,14 @@ export const ProfileProvider = ({ children }) => {
         });
 
         database.ref(".info/connected").on("value", (snapshot) => {
-          // If we're not currently connected, don't do anything.
-          if (snapshot.val() === false) {
+          if (!!snapshot.val() === false) {
             return;
           }
 
-          // If we are currently connected, then use the 'onDisconnect()'
-          // method to add a set which will only trigger once this
-          // client has disconnected by closing the app,
-          // losing internet, or any other means.
           userStatusRef
             .onDisconnect()
             .set(isOfflineForDatabase)
             .then(() => {
-              // The promise returned from .onDisconnect().set() will
-              // resolve as soon as the server acknowledges the onDisconnect()
-              // request, NOT once we've actually disconnected:
-              // https://firebase.google.com/docs/reference/js/firebase.database.OnDisconnect
-
-              // We can now safely set ourselves as 'online' knowing that the
-              // server will mark us as offline once we lose connection.
               userStatusRef.set(isOnlineForDatabase);
             });
         });
