@@ -25,8 +25,9 @@ export const ProfileProvider = ({ children }) => {
     let userStatusRef;
     //allow to subscribe to currently signed in user inside the firebase
     const authUnsub = auth.onAuthStateChanged((authObj) => {
-      // console.log('authObj',authObj) //user object will be here if signed in
+      //  console.log('authObj',authObj) //user object will be here if signed in
       if (authObj) {
+        console.log("authObj.uid", authObj.uid);
         //if authObj existd
         userStatusRef = database.ref(`/status/${authObj.uid}`);
         // get data from the database and put real time subscription on this data

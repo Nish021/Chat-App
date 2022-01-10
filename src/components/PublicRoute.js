@@ -10,7 +10,7 @@ const PublicRoute = ({ children, ...routeprops }) => {
     return (
       <Container>
         <Loader center verticl size="md" content="Loading" speed="slow" />
-      </Container>
+      </Container> 
     );
   }
 

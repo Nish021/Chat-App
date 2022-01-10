@@ -15,6 +15,7 @@ function assembledMessage(profile, chatId) {
       ...(profile.avatar ? { avatar: profile.avatar } : {}), //if its avatar then spread the avatar.profile there
     },
     createdAt: firebase.database.ServerValue.TIMESTAMP,
+    likeCount: 0,
   };
 }
 
