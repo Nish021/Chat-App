@@ -7,11 +7,13 @@ import { Link } from "react-router-dom";
 import PresenceDot from "../../PresenceDot";
 import IconBtnControl from "./IconBtnControl";
 import { auth } from "../../../misc/firebase";
-import { useMediaQuery } from "../../../misc/custom-hooks";
+import { useHover, useMediaQuery } from "../../../misc/custom-hooks";
 import { useCurrentRoom } from "../../../context/current-room.context";
 
 const MessageItem = ({ message, handleAdmin, handleLike }) => {
   const { author, createdAt, text, likes, likeCount } = message;
+
+  const [selfRef, isHovered] = useHover();
 
   const isAdmin = useCurrentRoom((v) => v.isAdmin);
   const admins = useCurrentRoom((v) => v.admins);
@@ -19,12 +21,14 @@ const MessageItem = ({ message, handleAdmin, handleLike }) => {
   const isMsgAuthorAdmin = admins.includes(author.uid);
   const isAuthor = auth.currentUser.uid === author.uid;
   const canGrantAdmin = isAdmin && !isAuthor;
-  // const [selfRef, isHovered] = useHover();
-  // const isMobile = useMediaQuery("(max-width: 992px)");
-  // const canShowIcons = isMobile;
+  const isMobile = useMediaQuery("(max-width: 992px)");
+  const canShowIcons = isMobile || isHovered;
   const isLiked = likes && Object.keys(likes).includes(auth.currentUser.uid);
   return (
-    <li className="padded mb-1">
+    <li
+      className={`padded mb-1 cursor-pointer ${isHovered ? "bg-black-02" : ""}`}
+      ref={selfRef}
+    >
       <div className="d-flex align-items-center font-bolder mb-1">
         <PresenceDot uid={author.uid} />
 
@@ -55,16 +59,7 @@ const MessageItem = ({ message, handleAdmin, handleLike }) => {
 
         <IconBtnControl
           {...(isLiked ? { color: "red" } : {})}
-          isVisible
-          iconName="heart"
-          tooltip="Like this message"
-          onClick={() => handleLike(message.id)}
-          badgeContent={likeCount}
-        />
-
-        <IconBtnControl
-          {...(isLiked ? { color: "red" } : {})}
-          isVisible
+          isVisible={canShowIcons}
           iconName="heart"
           tooltip="Like this message"
           onClick={() => handleLike(message.id)}
@@ -73,7 +68,7 @@ const MessageItem = ({ message, handleAdmin, handleLike }) => {
       </div>
 
       <div>
-        <span className="word-breal-all">{text}</span>
+        <span className="word-break-all">{text}</span>
       </div>
     </li>
   );

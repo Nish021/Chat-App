@@ -29,7 +29,8 @@ const IconBtnControl = ({
           <IconButton
             {...props}
             onClick={onClick}
-            circlesize="xs"
+            circle
+            size="xs"
             icon={<Icon icon={iconName} />}
           />
         </Whisper>
