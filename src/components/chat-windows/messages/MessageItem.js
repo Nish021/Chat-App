@@ -1,15 +1,24 @@
-import React from "react";
+import React, { memo } from "react";
 import ProfileAvatar from "../../dashboard/ProfileAvatar";
 import TimeAgo from "timeago-react";
+import { Button } from "rsuite";
 import ProfileInfoBtnModal from "./ProfileInfoBtnModal";
 import { Link } from "react-router-dom";
 import PresenceDot from "../../PresenceDot";
 import IconBtnControl from "./IconBtnControl";
 import { auth } from "../../../misc/firebase";
 import { useMediaQuery } from "../../../misc/custom-hooks";
+import { useCurrentRoom } from "../../../context/current-room.context";
 
-const MessageItem = ({ message, handleLike }) => {
+const MessageItem = ({ message, handleAdmin, handleLike }) => {
   const { author, createdAt, text, likes, likeCount } = message;
+
+  const isAdmin = useCurrentRoom((v) => v.isAdmin);
+  const admins = useCurrentRoom((v) => v.admins);
+
+  const isMsgAuthorAdmin = admins.includes(author.uid);
+  const isAuthor = auth.currentUser.uid === author.uid;
+  const canGrantAdmin = isAdmin && !isAuthor;
   // const [selfRef, isHovered] = useHover();
   // const isMobile = useMediaQuery("(max-width: 992px)");
   // const canShowIcons = isMobile;
@@ -25,12 +34,20 @@ const MessageItem = ({ message, handleLike }) => {
           className="ml-1"
           size="xs"
         />
-        {/* <span className="ml-2">{author.name}</span> */}
+
         <ProfileInfoBtnModal
           profile={author}
           appearance="link"
           className="p-0 ml-1 text-black"
-        />
+        >
+          {canGrantAdmin && (
+            <Button block onClick={() => handleAdmin(author.uid)} color="blue">
+              {isMsgAuthorAdmin
+                ? "Remove admin permission"
+                : "Give admin in this room"}
+            </Button>
+          )}
+        </ProfileInfoBtnModal>
         <TimeAgo
           datetime={createdAt}
           className="font-formal text-black-45 ml-2"
@@ -62,4 +79,4 @@ const MessageItem = ({ message, handleLike }) => {
   );
 };
 
-export default MessageItem;
+export default memo(MessageItem);

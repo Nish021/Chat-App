@@ -29,6 +29,29 @@ const Messages = () => {
     };
   }, [chatId]);
 
+  const handleAdmin = useCallback(
+    async (uid) => {
+      const adminsRef = database.ref(`/rooms/${chatId}/admins`);
+      let alertMsg;
+
+      await adminsRef.transaction((admins) => {
+        if (admins) {
+          if (admins[uid]) {
+            admins[uid] = null;
+            alertMsg = "Admin permission removed";
+          } else {
+            admins[uid] = true;
+            alertMsg = "Admin permission granted";
+          }
+        }
+
+        return admins;
+      });
+      Alert.info(alertMsg, 4000);
+    },
+    [chatId]
+  );
+
   const handleLike = useCallback(async (msgId) => {
     const { uid } = auth.currentUser;
     const messageRef = database.ref(`/messages/${msgId}`);
@@ -61,7 +84,12 @@ const Messages = () => {
       {isChatEmpty && <li>No messages yet</li>}
       {canShowMessages &&
         messages.map((msg) => (
-          <MessageItem key={msg.id} message={msg} handleLike={handleLike} />
+          <MessageItem
+            key={msg.id}
+            message={msg}
+            handleAdmin={handleAdmin}
+            handleLike={handleLike}
+          />
         ))}
     </ul>
   );
