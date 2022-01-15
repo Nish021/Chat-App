@@ -4,6 +4,7 @@ import { Alert } from "rsuite";
 import { auth, database } from "../../../misc/firebase";
 import { transformToArrWithId } from "../../../misc/helper";
 import MessageItem from "./MessageItem";
+import { storage } from "../../../misc/firebase";
 
 const Messages = () => {
   const { chatId } = useParams();
@@ -80,7 +81,7 @@ const Messages = () => {
   }, []);
 
   const handleDelete = useCallback(
-    async (msgId) => {
+    async (msgId, file) => {
       if (!window.confirm("Delete this message")) {
         return;
       }
@@ -106,6 +107,15 @@ const Messages = () => {
         Alert.info("Message has been deleted");
       } catch (err) {
         Alert.error(err.message);
+      }
+
+      if (file) {
+        try {
+          const fileRef = storage.refFromURL(file.url);
+          await fileRef.delete();
+        } catch (err) {
+          return Alert.error(err.message);
+        }
       }
     },
     [chatId, messages]
